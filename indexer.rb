@@ -4,7 +4,7 @@ require_relative 'repository_index.rb'
 require_relative   'tag_index.rb'
 
 ES_ENDPOINT="https://a96fa286204444a3a91c8327c5867a85.us-central1.gcp.cloud.es.io:9243"
-
+ORG_NAME='elastic'
 client = Elasticsearch::Client.new(url: ES_ENDPOINT, user: 'elastic', password: ENV['ES_CLOUD_PASSWORD'], log: false)
 
 repo_index = RepositoryIndex.new(client: client)
@@ -16,7 +16,7 @@ tag_index.create_index!
 
 ## Retrive GitHub Repos sorted by updated_at
 octokit_client = Octokit::Client.new(:access_token => ENV['GITHUB_TOKEN'])
-octokit_repos = octokit_client.org_repositories('elastic', :sort => :created).sort_by { |r| r.updated_at  }
+octokit_repos = octokit_client.org_repositories(ORG_NAME, :sort => :created).sort_by { |r| r.updated_at  }
 last_update_repo = octokit_repos[0]
 last_remote_update = DateTime.strptime(last_update_repo.updated_at.iso8601)
 
